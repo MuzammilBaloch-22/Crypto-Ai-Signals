@@ -23,7 +23,9 @@
 
 ### 🎥 Demo
 
-![Crypto AI Signals Demo](./video/cryptofinal-ezgif.com-video-to-gif-converter.gif)
+<div align="center">
+  <img src="./video/cryptofinal-ezgif.com-video-to-gif-converter.gif" alt="Crypto AI Signals Demo" width="100%" />
+</div>
 
 ---
 
@@ -200,14 +202,38 @@ Content-Type: application/json
 
 <div align="center">
 
-### Hero Section
-*Clean, modern interface with real-time ticker*
+### 🏠 Hero Section
+*Clean, modern interface with real-time crypto ticker*
 
-### Trading Signals
-*AI-generated signals with confidence scores*
+<img src="./screenshorts/hero.png" alt="Hero Section" width="90%" />
 
-### Market Analysis
-*Comprehensive technical and sentiment analysis*
+---
+
+### ⚙️ N8N Workflow
+*Automated backend workflow for data processing and AI analysis*
+
+<img src="./screenshorts/workflow.jpeg" alt="N8N Workflow" width="90%" />
+
+---
+
+### 🔄 Processing
+*Real-time analysis in progress*
+
+<img src="./screenshorts/processing.png" alt="Processing Analysis" width="90%" />
+
+---
+
+### 📊 Trading Signals
+*AI-generated BUY/SELL signals with entry, target, and stop-loss levels*
+
+<img src="./screenshorts/buy,sell-anayliez.png" alt="Trading Signals" width="90%" />
+
+---
+
+### 📈 Market Analysis
+*Comprehensive technical indicators and sentiment analysis*
+
+<img src="./screenshorts/market-ayaliez.png" alt="Market Analysis" width="90%" />
 
 </div>
 
