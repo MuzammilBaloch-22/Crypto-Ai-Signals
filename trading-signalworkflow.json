@@ -1,0 +1,573 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fcd93b16-a5f3-4531-b6c6-24b5aab4eeee",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        16
+      ],
+      "id": "5acfa926-e466-424b-b979-e9522d803696",
+      "name": "Webhook",
+      "webhookId": "fcd93b16-a5f3-4531-b6c6-24b5aab4eeee"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        176,
+        16
+      ],
+      "id": "9ac082c1-d4cf-4a39-85a5-7a24386628a2",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data 2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        512,
+        16
+      ],
+      "id": "4d65cfa8-4766-4b88-b65d-a25a363a55a0",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data 3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        800,
+        16
+      ],
+      "id": "f567905e-9d8f-45e8-9319-c3f3d05af8a7",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data 4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        208
+      ],
+      "id": "cd00e1c1-008f-4b38-ad8e-0a2d8bf2b0f6",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const seen = new Set();\nconst filtered = [];\n\nfor (const item of items) {\n  const content = item.json.content || '';\n  const title = item.json.title || '';\n  const description = item.json.description || '';\n  \n  // Garbage filter - cookie consent articles hatao\n  if (content.includes(\"If you click\")) continue;\n  if (content.includes(\"IAB Transparency\")) continue;\n  if (content.includes(\"Accept all\")) continue;\n  if (title.trim() === '') continue;\n  \n  // Duplicates hatao title ke basis pe\n  if (seen.has(title)) continue;\n  seen.add(title);\n  \n  // Sirf title + description rakho\n  filtered.push({\n    json: {\n      summary: `${title}. ${description}`\n    }\n  });\n}\n\nreturn filtered;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        208
+      ],
+      "id": "b35d6ea1-79d1-4db3-b358-9d4c0ddbc02a",
+      "name": "Clean & Filter Articles1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "articles",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        176,
+        208
+      ],
+      "id": "6f9941ab-eea0-4f71-8eb1-8afd02616e26",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "summary"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        512,
+        208
+      ],
+      "id": "75979231-a62f-4e07-9cfe-faf20d19ebd1",
+      "name": "Aggregate10"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a cryptocurrency market sentiment analyzer.\n\nAnalyze the provided articles and return ONLY a JSON object with exactly this structure - no extra text, no markdown, no code blocks:\n\n{\"shortTermSentiment\":{\"category\":\"Positive\",\"score\":0.5,\"rationale\":\"One sentence under 25 words.\"},\"longTermSentiment\":{\"category\":\"Neutral\",\"score\":0.0,\"rationale\":\"One sentence under 25 words.\"}}\n\nRules:\n- category must be exactly \"Positive\", \"Neutral\", or \"Negative\"\n- score must be between -1 and 1\n- rationale must be ONE sentence, maximum 25 words\n- Output ONLY the JSON, nothing else, no backticks, no markdown\n\nHere are the articles: {{ $json.summary }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        688,
+        208
+      ],
+      "id": "8b057a0d-d599-4b8e-bfcc-4c26c4752918",
+      "name": "Basic LLM Chain2"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        768,
+        416
+      ],
+      "id": "6a4c60f6-3428-4166-bab2-973a9030c503",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "c8RlSTpGgjsfwSH8",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of items) {\n  let text = item.json.text || item.json.output || '';\n  \n  text = text.replace(/\\\\n/g, '').replace(/\\n/g, '');\n  \n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    try {\n      const parsed = JSON.parse(match[0]);\n      item.json.shortTermSentiment = parsed.shortTermSentiment;\n      item.json.longTermSentiment = parsed.longTermSentiment;\n    } catch(e) {\n      item.json.error = 'parse failed';\n    }\n  }\n}\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        976,
+        208
+      ],
+      "id": "74ded472-0f76-4346-9529-2950ad078c56",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This for :{{ $('Webhook').first().json.body.pair }}\n\nThis  the analysis I got  from  scrapping articles:\n\nShort Term Analysis:\nCategory: {{ $json.shortTermSentiment.category }}\nScore: {{ $json.shortTermSentiment.score }}\nRationale: {{ $json.shortTermSentiment.rationale }}\n\nLong Term Analysis:\nCategory: {{ $json.longTermSentiment.category }}\nScore: {{ $json.longTermSentiment.score }}\nRationale: {{ $json.longTermSentiment.rationale }}\n\nHere is all the techical data:\nHere is the price of it for the last:\n\n15 minutes: \n{{ JSON.stringify($('Aggregate').first().json['data 1'][0] , null, 2) }}\n\n1 hour:\n\n{{ JSON.stringify($('Aggregate1').first().json['data 2'][0], null, 2) }}\n\n1 day: \n{{ JSON.stringify($('Aggregate2').first().json['data 3'][0], null, 2) }}\n\n1 month:{{ JSON.stringify($('Aggregate3').first().json['data 4'], null, 2) }}\n\n\nThis is a JSON array where each element is a candlestick data object for a crypto asset. Each object has the following structure:\n\ntimeframe: either \"15m\", \"1h\", or \"1d\", or \"1 month\"\n\ncandles: an array of values in the following order:\n[openTime, open, high, low, close, volume, closeTime,\nquoteVolume, trades, takerBuyBaseVolume, takerBuyQuoteVolume,\nignore]\n\nSentiment Data: At the end of the JSON array there is also a\nlong term and short term sentiment analysis based on crypto\nnews headlines for the past 3 days.\n\nPlease perform the following steps:\n\nGroup the Data:\nGroup the candlestick objects by timeframe into four groups:\n\nShort-term data: \"15m\" candles\n\nMedium-term data: \"1h\" candles\n\nLong-term data: \"1d\" candles\n\nVery Long term: \"1\" month\n\nAnalyze the Data in Detail:\n\nShort-term Analysis:\nUse the 15m candles (with supportive insights from the 1h candles) to evaluate volatility and determine near-term support and resistance levels. In your analysis, combine traditional lagging indicators (such as MACD, RSI, and OBV) as confirmation tools with direct price action elements-like key support/resistance zones, trendlines, and divergence patterns. Focus on these price-based signals to capture immediate market sentiment and structural levels.\n\nLong-term Analysis:\nUse the 1d candles and 1 month (and relevant insights from the 1h candles) to assess the overall market direction and major support/resistance zones. Here, integrate long-term trendlines and divergence signals along with lagging indicators to understand the broader market context and potential structural shifts.\n\nAction: (buy, sell, or hold)\nEntry Price:\nStop-Loss Level:\nTake Profit (TP) Level:\nRationale: Provide an extremely detailed explanation of your recommendation. Break down your rationale into three parts:\na. Primary Signals: Describe key price action insights (support/resistance zones, trendline breakouts or bounces, divergence patterns).\nb. Lagging Indicators: Explain how indicators (MACD, RSI, OBV, etc.) confirm or supplement these signals.\nc. Sentiment Analysis: Discuss volume trends, market sentiment, and macro factors. Combine these elements into one comprehensive explanation.\n\nFor Leveraged Trading:\n\nPosition: (long or short)\nRecommended Leverage: (e.g., 3x, 5x, etc.)\nEntry Price:\nStop-Loss Level:\nTake Profit (TP) Level:\nRationale: Provide a detailed explanation that similarly breaks down your rationale into:\na. Primary Price Action Signals: Outline key support/resistance levels, trendlines, and divergence patterns.\nb. Lagging Indicator Confirmation: Describe how indicators validate these signals.\nc. Sentiment & Macro Analysis: Include analysis of volume trends, overall market sentiment, and broader economic factors.\n\nOutput Format:\nReturn the final result as plain text with consistent styling for Telegram (html).\n\nEach section header (e.g., \"Spot Recommendations\") is in bold.\nEach sub-section (e.g., Primary Signals, Lagging Indicators, Sentiment Analysis) is also in bold.\n\nUse clear line breaks between sections and bullet points for clarity.\n\n\n\n\nShort-term:\nAction: ...\nEnter Prize: ...\nStop Loss: ...\nTake Profit: ...\nRationale: \n\nPrimary Signals: ...\n\nLagging Indicators: ...\n\nSentiment Analysis: ...\n\nLong-term:\nAction: ...\nEntry Price: ...\nStop Loss: ...\nTake Profit: ...\nRationale:\n\nPrimary Signals: ...\n\nLagging Indicators: ...\n\nSentiment Analysis: ...\n\nLeveraged Recommendations:\n\nShort-Term:\n\nPosition: ...\n\nLeverage: ...\n\nEntry Price: ...\n\nStop Loss: ...\n\nTake Profit:\n\nRationale:\n\nPrimary Price Action Signals: ...\n\nLagging Indicator Confirmation: ...\n\nSentiment & Macro Analysis: ...\n\nLong-Term:\n\nPosition: ...\n\nLeverage: ...\n\nEntry Price: ...\n\nStop Loss: ...\n\nTake Profit: ...\n\nRationale:\n\nPrimary Price Action Signals: ...\n\nLagging Indicator Confirmation: ...\n\nSentiment & Macro Analysis: ...\n\n\nIMPORTANT: You MUST include \"rationale\" field for EVERY section especially leveraged_recommendations short_term and long_term. Never skip rationale field otherwise output will be invalid.\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        32,
+        400
+      ],
+      "id": "f5eb93ce-6861-4aa7-92a0-ec32c5c9ffd1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        592
+      ],
+      "id": "88ed7a54-9a31-4d55-a395-1decc1fd58c5",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "zljklzffaoyqkDrA",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        592
+      ],
+      "id": "9e86b98d-bf1e-4a49-a78a-df1b519ee12a",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"short_term\": {\n    \"action\": \"hold\",\n    \"entry_price\": \"0.00\",\n    \"stop_loss\": \"0.00\",\n    \"take_profit\": \"0.00\",\n    \"rationale\": \"No rationale provided.\",\n    \"primary_signals\": \"No signals provided.\",\n    \"lagging_indicators\": \"No indicators provided.\",\n    \"sentiment_analysis\": \"No sentiment provided.\"\n  },\n  \"long_term\": {\n    \"action\": \"hold\",\n    \"entry_price\": \"0.00\",\n    \"stop_loss\": \"0.00\",\n    \"take_profit\": \"0.00\",\n    \"rationale\": \"No rationale provided.\",\n    \"primary_signals\": \"No signals provided.\",\n    \"lagging_indicators\": \"No indicators provided.\",\n    \"sentiment_analysis\": \"No sentiment provided.\"\n  },\n  \"leveraged_recommendations\": {\n    \"short_term\": {\n      \"position\": \"short\",\n      \"leverage\": \"3x\",\n      \"entry_price\": \"0.00\",\n      \"stop_loss\": \"0.00\",\n      \"take_profit\": \"0.00\",\n      \"rationale\": \"No rationale provided.\",\n      \"primary_price_action_signals\": \"No signals provided.\",\n      \"lagging_indicator_confirmation\": \"No confirmation provided.\",\n      \"sentiment_macro_analysis\": \"No analysis provided.\"\n    },\n    \"long_term\": {\n      \"position\": \"long\",\n      \"leverage\": \"3x\",\n      \"entry_price\": \"0.00\",\n      \"stop_loss\": \"0.00\",\n      \"take_profit\": \"0.00\",\n      \"rationale\": \"No rationale provided.\",\n      \"primary_price_action_signals\": \"No signals provided.\",\n      \"lagging_indicator_confirmation\": \"No confirmation provided.\",\n      \"sentiment_macro_analysis\": \"No analysis provided.\"\n    }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        592
+      ],
+      "id": "ae74ff89-02c8-4899-a309-0dae26a40856",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        528,
+        560
+      ],
+      "id": "6a16b6b7-486d-48f8-a870-6fb32d51b047",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.binance.com/api/v3/klines?symbol={{ $('Webhook').item.json.body.pair }}&interval=1M&limit=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        944,
+        16
+      ],
+      "id": "f852c080-2489-43c8-986e-40ace0262ba0",
+      "name": "Binance-1mon1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.binance.com/api/v3/klines?symbol={{ $json.body.pair }}&interval=15m&limit=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        16
+      ],
+      "id": "c83c6843-22e4-4bd1-96e3-1661cbb6fb4d",
+      "name": "Binance-15min"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.binance.com/api/v3/klines?symbol={{ $('Webhook').item.json.body.pair }}&interval=1h&limit=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        336,
+        16
+      ],
+      "id": "618d75d5-a767-4223-b3c5-998f1fe6110a",
+      "name": "Binance-1hr"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.binance.com/api/v3/klines?symbol={{ $('Webhook').item.json.body.pair }}&interval=1d&limit=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        656,
+        16
+      ],
+      "id": "83f55b28-ee8d-4284-a7dd-4a8243bad8dc",
+      "name": "Binance-1day"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "==Crypto OR Bitcoin OR {{$('Webhook').item.json.body.pair}}"
+            },
+            {
+              "name": "from",
+              "value": "=={{ new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] }}"
+            },
+            {
+              "name": "sortBy",
+              "value": "popularity"
+            },
+            {
+              "name": "apiKey",
+              "value": "60a2a799619147b4bc0e197541faf5b9"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        48,
+        208
+      ],
+      "id": "9c7fadd8-5152-4005-bc47-7815a86a7b46",
+      "name": "News"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Binance-15min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Binance-1hr",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Binance-1day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Binance-1mon1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean & Filter Articles1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Clean & Filter Articles1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate10": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Binance-1mon1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Binance-15min": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Binance-1hr": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Binance-1day": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd1c9b114492f11ef411765bf13fa04990c03bf77b339fc6fe6f645e61ae05ea"
+  }
+}
