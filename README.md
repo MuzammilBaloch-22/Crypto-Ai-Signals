@@ -21,15 +21,9 @@
 
 ---
 
-### 🎥 Demo Video
+### 🎥 Demo
 
-**Full Project Walkthrough - N8N Workflow to Live Trading Signals**
-
-https://github.com/MuzammilBaloch-22/Crypto-Ai-Signals/assets/video/demo.mp4
-
-> � **eVideo includes:** N8N workflow setup → Execution → Web interface → Coin analysis → Real-time results
-
-*If video doesn't play, check the `video/` folder in this repository*
+![Crypto AI Signals Demo](./video/cryptofinal-ezgif.com-video-to-gif-converter.gif)
 
 ---
 
