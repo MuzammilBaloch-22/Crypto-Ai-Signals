@@ -381,7 +381,7 @@ The signals generated are AI-based predictions and should not be the sole basis 
 
 ### Muzammil Ahmed
 
-**Full-Stack Developer | AI Enthusiast | Crypto Trader**
+**Agentic Ai Developer**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muzammil-ahmed-0902612a5/)
 [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/muzammil_baloch.py/)
@@ -406,7 +406,7 @@ If you found this project helpful, please consider:
 
 ## 📞 Contact & Support
 
-- 📧 Email: muzammilahmed@example.com
+- 📧 Email: muzammilbaloch.dev@gmail.com
 - 💬 Issues: [GitHub Issues](https://github.com/MuzammilBaloch-22/Crypto-Ai-Signals/issues)
 - 🐛 Bug Reports: Use issue templates
 - 💡 Feature Requests: Open a discussion
